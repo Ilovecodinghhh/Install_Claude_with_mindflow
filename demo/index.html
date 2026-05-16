@@ -976,6 +976,12 @@ tr:hover td { background: var(--gray-50); }
             ② 建议搭配购买血压计（近期有优惠）<br>
             ③ 天冷关怀：提醒注意保暖，心脑血管注意
           </div>
+          <div style="font-size:13px;padding:10px;background:#faf5ff;border-radius:8px;margin-top:8px;border:1px solid #e9d5ff;">
+            <strong style="color:#7c3aed;">👨‍👩‍👧 家庭信息：</strong><br>
+            儿子小王已为其开通家庭账户<br>
+            儿子已收到断药提醒，可能远程代购<br>
+            <span class="text-muted">家庭总积分：5,820（可兑换血压计）</span>
+          </div>
           <div class="activity-actions mt-12">
             <button class="btn btn-primary btn-sm" style="flex:1;" onclick="showToast('已发送5元优惠券')">发券</button>
             <button class="btn btn-outline btn-sm" style="flex:1;">记录回访</button>
@@ -1180,6 +1186,61 @@ tr:hover td { background: var(--gray-50); }
               <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">生日双倍积分</span>
               <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">免费健康检测</span>
             </div>
+          </div>
+        </div>
+
+        <!-- 家庭健康账户 -->
+        <div style="padding:14px;background:#fff;border-radius:12px;border:1px solid var(--gray-200);margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:600;">👨‍👩‍👧 我的家庭</div>
+            <div style="font-size:12px;color:var(--primary);cursor:pointer;">管理成员 →</div>
+          </div>
+          
+          <!-- 家庭成员：爸爸 -->
+          <div style="padding:10px;background:var(--danger-bg);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--danger);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-weight:600;font-size:13px;">👴 爸爸 · 王大爷</div>
+                <div style="font-size:11px;color:var(--gray-500);">72岁 · 高血压+冠心病</div>
+              </div>
+              <span class="badge-tag urgent" style="font-size:11px;">药快没了</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:6px;">
+              氨氯地平：<strong style="color:var(--danger);">明天用完</strong> · 阿司匹林：还剩5天
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:12px;" onclick="showModal('familyBuy')">🛒 帮爸爸买药</button>
+              <button class="btn btn-outline btn-sm" style="flex:1;justify-content:center;font-size:12px;" onclick="showToast('已设置每天8:00提醒爸爸吃药')">⏰ 吃药提醒</button>
+            </div>
+          </div>
+
+          <!-- 家庭成员：妈妈 -->
+          <div style="padding:10px;background:var(--success-bg);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--success);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-weight:600;font-size:13px;">👵 妈妈 · 李阿姨</div>
+                <div style="font-size:11px;color:var(--gray-500);">68岁 · 糖尿病</div>
+              </div>
+              <span class="badge-tag success" style="font-size:11px;">药量充足</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:6px;">
+              二甲双胍：还剩18天 · 格列齐特：还剩22天
+            </div>
+          </div>
+
+          <!-- 家庭积分 -->
+          <div style="padding:10px;background:var(--primary-bg);border-radius:8px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>🏆 家庭总积分</span>
+              <strong style="color:var(--primary);font-size:16px;">5,820</strong>
+            </div>
+            <div style="color:var(--gray-500);margin-top:2px;">我 2,350 + 爸爸 2,180 + 妈妈 1,290</div>
+            <div style="color:var(--primary);margin-top:4px;">可兑换：欧姆龙血压计（5,000分）💡</div>
+          </div>
+
+          <!-- 家庭月报入口 -->
+          <div style="text-align:center;margin-top:10px;">
+            <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="showModal('familyReport')">📊 查看5月家庭健康月报</button>
           </div>
         </div>
 
@@ -1473,6 +1534,118 @@ function showModal(type) {
         <button class="btn btn-outline" onclick="showToast('活动已创建为草稿');closeModal();">保存草稿</button>
         <button class="btn btn-outline" onclick="closeModal()">取消</button>
       </div>
+    `;
+  } else if (type === 'familyBuy') {
+    content.innerHTML = `
+      <h3>🛒 帮爸爸买药</h3>
+      <div style="padding:12px;background:var(--primary-bg);border-radius:8px;margin-bottom:16px;font-size:13px;">
+        <strong>👴 王大爷</strong> · 72岁 · 高血压+冠心病<br>
+        以下药品即将用完，系统已自动匹配常购规格：
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-weight:600;">氨氯地平片 5mg×28片</div>
+            <div class="text-muted">常购品牌：络活喜 · 预计明天用完</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:700;color:var(--danger);">¥32.00</div>
+            <div style="font-size:11px;color:var(--success);">💎 9折 ¥28.80</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;">
+          <div>
+            <div style="font-weight:600;">阿司匹林肠溶片 100mg×30片</div>
+            <div class="text-muted">常购品牌：拜阿司匹灵 · 5天后用完</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:700;">¥25.00</div>
+            <div style="font-size:11px;color:var(--success);">💎 9折 ¥22.50</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">取药方式</label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <div style="flex:1;padding:12px;border:2px solid var(--primary);border-radius:8px;text-align:center;cursor:pointer;background:var(--primary-bg);">
+            <div style="font-size:16px;">🚗</div>
+            <div style="font-size:13px;font-weight:600;color:var(--primary);">送药上门</div>
+            <div style="font-size:11px;color:var(--gray-500);">钻石会员免配送费</div>
+            <div style="font-size:11px;color:var(--gray-500);">预计2小时内送达</div>
+          </div>
+          <div style="flex:1;padding:12px;border:1px solid var(--gray-300);border-radius:8px;text-align:center;cursor:pointer;">
+            <div style="font-size:16px;">🏪</div>
+            <div style="font-size:13px;font-weight:600;">到店自取</div>
+            <div style="font-size:11px;color:var(--gray-500);">朝阳路店（最近）</div>
+            <div style="font-size:11px;color:var(--gray-500);">已为爸爸预留</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:10px;background:var(--gray-50);border-radius:8px;font-size:13px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;"><span>小计</span><span>¥57.00</span></div>
+        <div style="display:flex;justify-content:space-between;color:var(--success);"><span>钻石折扣 -10%</span><span>-¥5.70</span></div>
+        <div style="display:flex;justify-content:space-between;color:var(--danger);"><span>降压药专享券</span><span>-¥5.00</span></div>
+        <hr class="divider">
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;"><span>合计</span><span style="color:var(--danger);">¥46.30</span></div>
+      </div>
+      <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="showToast('下单成功！药品将在2小时内送到爸爸家，已通知爸爸注意查收');closeModal();">
+        💳 确认代付 ¥46.30
+      </button>
+      <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--gray-400);">爸爸将收到取药/收药通知</div>
+    `;
+  } else if (type === 'familyReport') {
+    content.innerHTML = `
+      <h3>📊 5月家庭健康月报</h3>
+      <div style="text-align:center;padding:12px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:8px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:600;">👨‍👩‍👧 王家 · 5月健康总览</div>
+        <div style="font-size:12px;color:var(--gray-500);">3位家庭成员 · 总积分 5,820</div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-weight:600;font-size:14px;margin-bottom:8px;">👴 爸爸 · 王大爷</div>
+        <div style="padding:12px;background:var(--gray-50);border-radius:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span>按时服药率</span>
+            <strong style="color:var(--success);">95% ✅</strong>
+          </div>
+          <div class="progress-bar mb-8"><div class="progress-fill green" style="width:95%;"></div></div>
+          <div>📈 血压趋势：平均 135/82 mmHg，较上月下降3%，控制良好</div>
+          <div>💊 本月用药花费：¥186</div>
+          <div style="color:var(--primary);margin-top:4px;">💡 AI建议：血压控制稳定，继续当前方案，注意夏季补水</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-weight:600;font-size:14px;margin-bottom:8px;">👵 妈妈 · 李阿姨</div>
+        <div style="padding:12px;background:var(--gray-50);border-radius:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span>按时服药率</span>
+            <strong style="color:var(--warning);">78% ⚠️</strong>
+          </div>
+          <div class="progress-bar mb-8"><div class="progress-fill orange" style="width:78%;"></div></div>
+          <div>📈 血糖趋势：空腹平均 7.8 mmol/L，较上月略升，需关注</div>
+          <div>💊 本月用药花费：¥142</div>
+          <div>⚠️ 本月有2次忘记补药（5月8日、5月19日）</div>
+          <div style="color:var(--warning);margin-top:4px;">💡 AI建议：建议开启每日服药闹钟提醒，血糖偏高建议就医复查</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-weight:600;font-size:14px;margin-bottom:8px;">👩 我</div>
+        <div style="padding:12px;background:var(--gray-50);border-radius:8px;font-size:13px;">
+          <div>💊 本月用药花费：¥92（日常保健品）</div>
+          <div>✅ 健康状态良好，无异常</div>
+        </div>
+      </div>
+
+      <div style="padding:12px;background:var(--primary-bg);border-radius:8px;font-size:13px;margin-bottom:12px;">
+        <strong>📋 下月预测：</strong><br>
+        • 预计家庭用药花费：¥420<br>
+        • 爸爸6月2日需补降压药，6月8日需补阿司匹林<br>
+        • 妈妈6月15日需补降糖药<br>
+        • 建议：用家庭积分兑换血压计（5,000分），方便爸爸在家监测
+      </div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="closeModal()">关闭</button>
     `;
   } else if (type === 'editActivity') {
     content.innerHTML = `
