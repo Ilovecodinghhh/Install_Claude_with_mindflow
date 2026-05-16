@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字副店长 - AI智能药房管理系统</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-bg: #eff6ff;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --warning: #ea580c;
+  --warning-bg: #fff7ed;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-800);
+  line-height: 1.6;
+}
+
+/* ===== NAV ===== */
+.top-nav {
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: #fff;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.top-nav .logo {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.top-nav .logo span { font-size: 24px; }
+.nav-tabs {
+  display: flex;
+  margin-left: 40px;
+  gap: 4px;
+}
+.nav-tab {
+  padding: 8px 20px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  transition: all 0.2s;
+  border: none;
+  background: none;
+}
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.nav-tab.active { color: var(--primary); background: var(--gray-100); }
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+}
+.nav-right .badge {
+  background: #ef4444;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 12px;
+  position: relative;
+  top: -8px;
+  left: -8px;
+}
+
+/* ===== PANELS ===== */
+.panel { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* ===== CARDS ===== */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .icon { font-size: 20px; }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.stat-card.blue::before { background: var(--primary); }
+.stat-card.green::before { background: var(--success); }
+.stat-card.orange::before { background: var(--warning); }
+.stat-card.red::before { background: var(--danger); }
+.stat-label { font-size: 13px; color: var(--gray-500); margin-bottom: 4px; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+.stat-change { font-size: 12px; margin-top: 4px; }
+.stat-change.up { color: var(--success); }
+.stat-change.down { color: var(--danger); }
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 12px 16px; background: var(--gray-50); color: var(--gray-500); font-weight: 500; font-size: 13px; border-bottom: 1px solid var(--gray-200); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); }
+tr:hover td { background: var(--gray-50); }
+
+/* ===== BADGES ===== */
+.badge-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-tag.urgent { background: var(--danger-bg); color: var(--danger); }
+.badge-tag.warning { background: var(--warning-bg); color: var(--warning); }
+.badge-tag.normal { background: var(--primary-bg); color: var(--primary); }
+.badge-tag.success { background: var(--success-bg); color: var(--success); }
+.badge-tag.disease { background: #faf5ff; color: #7c3aed; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-light); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #15803d; }
+.btn-outline { background: #fff; color: var(--gray-700); border: 1px solid var(--gray-300); }
+.btn-outline:hover { background: var(--gray-50); }
+.btn-sm { padding: 4px 12px; font-size: 13px; }
+.btn-danger { background: var(--danger); color: #fff; }
+
+/* ===== WEATHER BANNER ===== */
+.weather-banner {
+  background: linear-gradient(135deg, #1e3a5f, #2563eb);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.weather-banner .weather-icon { font-size: 48px; }
+.weather-banner .weather-info h3 { font-size: 16px; font-weight: 600; }
+.weather-banner .weather-info p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+.weather-banner .weather-alert {
+  margin-left: auto;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+.weather-banner .weather-alert strong { color: #fbbf24; }
+
+/* ===== ACTIVITY CARD ===== */
+.activity-card {
+  border-left: 4px solid var(--primary);
+  padding: 16px 20px;
+  background: var(--primary-bg);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 12px;
+}
+.activity-card h4 { font-size: 15px; color: var(--gray-800); }
+.activity-card p { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+.activity-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* ===== MEMBER PROFILE (Phone mockup) ===== */
+.phone-frame {
+  width: 375px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 8px solid var(--gray-800);
+}
+.phone-status-bar {
+  background: var(--gray-800);
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+.phone-header {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+.phone-body { padding: 16px; max-height: 600px; overflow-y: auto; }
+
+/* ===== Employee sidebar ===== */
+.emp-layout { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+.emp-sidebar .member-card {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.member-name { font-size: 16px; font-weight: 600; }
+.member-meta { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+.member-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.med-list { margin-top: 12px; }
+.med-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 13px;
+}
+
+/* ===== GRID LAYOUTS ===== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .emp-layout { grid-template-columns: 1fr; }
+  .phone-frame { width: 100%; border-radius: 16px; }
+  .nav-tabs { display: none; }
+}
+
+/* ===== CHART PLACEHOLDER ===== */
+.chart-placeholder {
+  height: 200px;
+  background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  gap: 8px;
+  position: relative;
+}
+.chart-bar {
+  flex: 1;
+  background: var(--primary);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.5s;
+  min-width: 20px;
+}
+.chart-bar.green { background: var(--success); }
+.chart-bar.orange { background: var(--warning); }
+.chart-bar-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+.progress-fill.blue { background: var(--primary); }
+.progress-fill.green { background: var(--success); }
+.progress-fill.orange { background: var(--warning); }
+.progress-fill.red { background: var(--danger); }
+
+/* ===== TIMELINE ===== */
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.timeline-dot.blue { background: var(--primary); }
+.timeline-dot.green { background: var(--success); }
+.timeline-dot.orange { background: var(--warning); }
+.timeline-content { flex: 1; }
+.timeline-time { font-size: 12px; color: var(--gray-400); }
+.timeline-text { font-size: 14px; color: var(--gray-700); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  background: var(--success);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(120%);
+  transition: transform 0.3s;
+  z-index: 200;
+}
+.toast.show { transform: translateX(0); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.modal h3 { font-size: 18px; margin-bottom: 16px; }
+
+/* ===== MISC ===== */
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.divider { border: none; border-top: 1px solid var(--gray-200); margin: 16px 0; }
+.text-muted { color: var(--gray-500); font-size: 13px; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mt-12 { margin-top: 12px; }
+.gap-8 { gap: 8px; }
+.flex { display: flex; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav">
+  <div class="logo"><span>💊</span> 数字副店长</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPanel('admin')">📊 管理后台</button>
+    <button class="nav-tab" onclick="switchPanel('employee')">👩‍⚕️ 员工工作台</button>
+    <button class="nav-tab" onclick="switchPanel('customer')">📱 顾客端</button>
+  </div>
+  <div class="nav-right">
+    <span>🔔<span class="badge">3</span></span>
+    <span>运营管理员</span>
+  </div>
+</nav>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()" id="modalContent"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 1: 管理后台 -->
+<!-- ============================================================ -->
+<div class="panel active" id="panel-admin">
+
+  <!-- Weather Banner -->
+  <div class="weather-banner">
+    <div class="weather-icon">🌡️</div>
+    <div class="weather-info">
+      <h3>⚠️ 寒潮预警 · 未来48小时降温12℃</h3>
+      <p>预计明日最低温-3℃，大风6-7级 | 影响区域：全市各门店</p>
+    </div>
+    <div class="weather-alert">
+      <strong>AI建议：</strong>已自动生成"寒潮关怀"营销方案<br>
+      涉及3240名高血压会员，待审批 →
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-label">活跃会员数</div>
+      <div class="stat-value">84,562</div>
+      <div class="stat-change up">↑ 3.2% 较上周</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">本周复购率</div>
+      <div class="stat-value">52.3%</div>
+      <div class="stat-change up">↑ 8.1pp 较上月</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">触达响应率</div>
+      <div class="stat-value">11.7%</div>
+      <div class="stat-change up">↑ vs 0.5%群发</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">库存预警</div>
+      <div class="stat-value">17</div>
+      <div class="stat-change down">5项紧急待处理</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- AI活动审批 -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🤖</span> AI生成活动 · 待审批</div>
+
+      <div class="activity-card">
+        <div class="flex-between mb-8">
+          <h4>🔴 寒潮来袭，健康先行</h4>
+          <span class="badge-tag urgent">紧急</span>
+        </div>
+        <p><strong>目标人群：</strong>3,240名高血压会员（其中487人处于断药期）</p>
+        <p><strong>策略：</strong>心脑血管用药满50减8 + 免费血压测量 + 个性化关怀话术</p>
+        <p><strong>预计触达：</strong>企微精准推送487人（优先） + 小程序Banner全员展示</p>
+        <p><strong>AI置信度：</strong>92% | 参考历史同类活动转化率8.3%</p>
+        <div class="activity-actions">
+          <button class="btn btn-success btn-sm" onclick="approveActivity('寒潮关怀活动')">✅ 批准发布</button>
+          <button class="btn btn-outline btn-sm" onclick="showModal('editActivity')">✏️ 修改后发布</button>
+          <button class="btn btn-outline btn-sm">❌ 驳回</button>
+        </div>
+      </div>
+
+      <div class="activity-card" style="border-left-color: var(--warning);">
+        <div class="flex-between mb-8">
+          <h4>🟡 春季过敏季提前拦截</h4>
+          <span class="badge-tag warning">建议</span>
+        </div>
+        <p><strong>目标人群：</strong>1,876名过敏体质会员</p>
+        <p><strong>策略：</strong>抗过敏药组合包85折 + 花粉指数实时推送</p>
+        <p><strong>触发依据：</strong>花粉指数连续3天上升，同比去年提前5天进入高发期</p>
+        <div class="activity-actions">
+          <button class="btn btn-success btn-sm" onclick="approveActivity('春季过敏活动')">✅ 批准</button>
+          <button class="btn btn-outline btn-sm">暂缓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 库存预警 -->
+    <div class="card">
+      <div class="card-title"><span class="icon">📦</span> 库存智能预警</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>药品名称</th>
+              <th>门店</th>
+              <th>当前库存</th>
+              <th>预计需求(7天)</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>感冒灵颗粒</strong></td>
+              <td>朝阳路店</td>
+              <td>23盒</td>
+              <td>65盒</td>
+              <td><span class="badge-tag urgent">即将断货</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="showModal('transfer')">调拨</button></td>
+            </tr>
+            <tr>
+              <td><strong>氨氯地平片</strong></td>
+              <td>建国路店</td>
+              <td>12盒</td>
+              <td>45盒</td>
+              <td><span class="badge-tag urgent">即将断货</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="showToast('已发起补货申请')">补货</button></td>
+            </tr>
+            <tr>
+              <td><strong>二甲双胍</strong></td>
+              <td>中心店</td>
+              <td>340盒</td>
+              <td>28盒</td>
+              <td><span class="badge-tag warning">库存积压</span></td>
+              <td><button class="btn btn-outline btn-sm">促销</button></td>
+            </tr>
+            <tr>
+              <td><strong>阿莫西林胶囊</strong></td>
+              <td>火车站店</td>
+              <td>56盒</td>
+              <td>120盒</td>
+              <td><span class="badge-tag warning">需求激增</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="showToast('已发起紧急补货')">紧急补货</button></td>
+            </tr>
+            <tr>
+              <td><strong>维生素C泡腾片</strong></td>
+              <td>大学城店</td>
+              <td>8盒</td>
+              <td>35盒</td>
+              <td><span class="badge-tag urgent">即将断货</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="showToast('已发起调拨请求')">调拨</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- 策略工厂 -->
+    <div class="card">
+      <div class="card-title"><span class="icon">⚙️</span> 策略工厂 · 可复用策略模块</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">🫀 高血压患者气温骤降触达</div>
+            <div class="text-muted">触发：降温＞8℃ | 人群：高血压标签 | 已验证转化率8.3%</div>
+          </div>
+          <span class="badge-tag success">运行中</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">🤧 过敏季提前拦截策略</div>
+            <div class="text-muted">触发：花粉指数＞150 | 人群：过敏体质 | 已验证转化率6.7%</div>
+          </div>
+          <span class="badge-tag success">运行中</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">💊 慢病复购周期提醒</div>
+            <div class="text-muted">触发：断药前3天 | 人群：所有慢病会员 | 已验证转化率12.1%</div>
+          </div>
+          <span class="badge-tag success">运行中</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--gray-50);border-radius:8px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">🔥 高温肠胃用药推荐</div>
+            <div class="text-muted">触发：气温＞35℃连续3天 | 人群：肠胃病史 | 待验证</div>
+          </div>
+          <span class="badge-tag normal">草稿</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 复购趋势 -->
+    <div class="card">
+      <div class="card-title"><span class="icon">📈</span> 慢病复购率趋势（近8周）</div>
+      <div class="chart-placeholder" style="height:220px;align-items:flex-end;padding-bottom:36px;">
+        <div class="chart-bar" style="height:35%;"><span class="chart-bar-label">W1</span></div>
+        <div class="chart-bar" style="height:38%;"><span class="chart-bar-label">W2</span></div>
+        <div class="chart-bar" style="height:36%;"><span class="chart-bar-label">W3</span></div>
+        <div class="chart-bar" style="height:41%;"><span class="chart-bar-label">W4</span></div>
+        <div class="chart-bar green" style="height:45%;"><span class="chart-bar-label">W5</span></div>
+        <div class="chart-bar green" style="height:48%;"><span class="chart-bar-label">W6</span></div>
+        <div class="chart-bar green" style="height:50%;"><span class="chart-bar-label">W7</span></div>
+        <div class="chart-bar green" style="height:55%;"><span class="chart-bar-label">W8</span></div>
+      </div>
+      <div class="text-muted" style="text-align:center;margin-top:8px;">系统上线后（W5起）复购率从35%提升至52.3% ↑</div>
+    </div>
+  </div>
+
+  <!-- 会员分群 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">👥</span> 会员分群运营</div>
+    <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);">
+      <div style="text-align:center;padding:16px;background:var(--primary-bg);border-radius:8px;">
+        <div style="font-size:24px;font-weight:700;color:var(--primary);">32,450</div>
+        <div class="text-muted">慢病会员</div>
+        <div style="margin-top:4px;"><span class="badge-tag disease">高血压 18,230</span></div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--success-bg);border-radius:8px;">
+        <div style="font-size:24px;font-weight:700;color:var(--success);">15,680</div>
+        <div class="text-muted">高价值会员</div>
+        <div style="margin-top:4px;"><span class="badge-tag success">年消费＞3000</span></div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--warning-bg);border-radius:8px;">
+        <div style="font-size:24px;font-weight:700;color:var(--warning);">8,934</div>
+        <div class="text-muted">流失预警</div>
+        <div style="margin-top:4px;"><span class="badge-tag warning">＞60天未到店</span></div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--danger-bg);border-radius:8px;">
+        <div style="font-size:24px;font-weight:700;color:var(--danger);">2,187</div>
+        <div class="text-muted">断药期内</div>
+        <div style="margin-top:4px;"><span class="badge-tag urgent">需紧急触达</span></div>
+      </div>
+      <div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:8px;">
+        <div style="font-size:24px;font-weight:700;color:#059669;">1,876</div>
+        <div class="text-muted">过敏体质</div>
+        <div style="margin-top:4px;"><span class="badge-tag disease">春季重点关注</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 2: 员工工作台 -->
+<!-- ============================================================ -->
+<div class="panel" id="panel-employee">
+
+  <div class="section-title">👩‍⚕️ 员工工作台 · 朝阳路店 · 店员小王</div>
+
+  <!-- 今日概览 -->
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card blue">
+      <div class="stat-label">今日待触达</div>
+      <div class="stat-value">8<span style="font-size:14px;color:var(--gray-400);"> 位会员</span></div>
+      <div class="stat-change">3位紧急 · 5位常规</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">已完成触达</div>
+      <div class="stat-value">5</div>
+      <div class="stat-change up">转化3人到店</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">库存提醒</div>
+      <div class="stat-value">3</div>
+      <div class="stat-change">2项即将断货</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">本周业绩</div>
+      <div class="stat-value">¥12,450</div>
+      <div class="stat-change up">↑ 23% 较上周</div>
+    </div>
+  </div>
+
+  <div class="emp-layout">
+    <div>
+      <!-- 触达任务 -->
+      <div class="card">
+        <div class="card-title"><span class="icon">📋</span> 今日触达任务</div>
+
+        <!-- Task 1 -->
+        <div style="padding:16px;background:var(--danger-bg);border-radius:8px;margin-bottom:12px;border-left:4px solid var(--danger);">
+          <div class="flex-between">
+            <div>
+              <span class="badge-tag urgent" style="margin-bottom:4px;">紧急</span>
+              <div style="font-weight:600;margin-top:4px;">张美兰（张阿姨）· VIP会员</div>
+              <div class="text-muted">65岁 · 高血压 · 年消费¥4,200 · 降压药预计明天用完</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="text-muted">最近到店：3天前</div>
+              <div class="text-muted">偏好：企微消息</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:#fff;border-radius:8px;font-size:13px;">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:4px;">💬 AI推荐话术：</div>
+            "阿姨您好！明天大降温，气温要降到-3℃呢，您的降压药差不多该补了吧？我们给您留了一份，到店还能免费量个血压，我帮您准备好，您什么时候方便过来？😊"
+          </div>
+          <div class="activity-actions">
+            <button class="btn btn-primary btn-sm" onclick="sendMessage('张阿姨')">📱 一键发送企微</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('已标记为已电话联系')">📞 标记已电话</button>
+            <button class="btn btn-outline btn-sm" onclick="showModal('memberProfile')">👤 查看档案</button>
+          </div>
+        </div>
+
+        <!-- Task 2 -->
+        <div style="padding:16px;background:var(--warning-bg);border-radius:8px;margin-bottom:12px;border-left:4px solid var(--warning);">
+          <div class="flex-between">
+            <div>
+              <span class="badge-tag warning">较急</span>
+              <div style="font-weight:600;margin-top:4px;">李建国（李叔叔）</div>
+              <div class="text-muted">72岁 · 高血压+糖尿病 · 年消费¥6,800 · 降糖药3天后用完</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:#fff;border-radius:8px;font-size:13px;">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:4px;">💬 AI推荐话术：</div>
+            "李叔叔好！最近天冷了，您的血糖控制得怎么样？二甲双胍差不多该补了，我们这周有个慢病关怀活动，到店免费测血糖，还送个保温杯，要帮您留一份吗？"
+          </div>
+          <div class="activity-actions">
+            <button class="btn btn-primary btn-sm" onclick="sendMessage('李叔叔')">📱 一键发送</button>
+            <button class="btn btn-outline btn-sm">📞 标记已电话</button>
+          </div>
+        </div>
+
+        <!-- Task 3 -->
+        <div style="padding:16px;background:var(--primary-bg);border-radius:8px;margin-bottom:12px;border-left:4px solid var(--primary);">
+          <div class="flex-between">
+            <div>
+              <span class="badge-tag normal">常规</span>
+              <div style="font-weight:600;margin-top:4px;">王小红</div>
+              <div class="text-muted">38岁 · 过敏体质 · 年消费¥1,200 · 花粉季即将到来</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:#fff;border-radius:8px;font-size:13px;">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:4px;">💬 AI推荐话术：</div>
+            "小红您好～花粉季快到了，去年您这个时候来买过氯雷他定对吧？今年我们有个过敏季套装85折，提前备着比较安心，需要帮您留一份吗？"
+          </div>
+          <div class="activity-actions">
+            <button class="btn btn-primary btn-sm" onclick="sendMessage('王小红')">📱 一键发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 用药知识问答 -->
+      <div class="card">
+        <div class="card-title"><span class="icon">💡</span> AI用药助手</div>
+        <div style="background:var(--gray-50);border-radius:8px;padding:16px;">
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <input type="text" placeholder="输入用药问题，如：氨氯地平和辛伐他汀可以一起吃吗？" 
+              style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:8px;font-size:14px;outline:none;" 
+              id="drugQuestion" onkeydown="if(event.key==='Enter')askDrug()">
+            <button class="btn btn-primary" onclick="askDrug()">提问</button>
+          </div>
+          <div id="drugAnswer" style="display:none;padding:16px;background:#fff;border-radius:8px;font-size:14px;line-height:1.8;">
+          </div>
+          <div class="text-muted" style="margin-top:8px;">常见问题：高血压联合用药 | 糖尿病用药注意 | 老年人用药禁忌 | 药物储存条件</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧sidebar：当前顾客 -->
+    <div class="emp-sidebar">
+      <div class="card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;">
+        <div class="card-title"><span class="icon">👤</span> 当前到店顾客</div>
+        <div class="member-card" style="background:#fff;">
+          <div class="flex-between">
+            <div>
+              <div class="member-name">赵大爷</div>
+              <div class="member-meta">78岁 · 会员ID: M20198</div>
+            </div>
+            <span class="badge-tag success">VIP</span>
+          </div>
+          <div class="member-tags">
+            <span class="badge-tag disease">高血压</span>
+            <span class="badge-tag disease">冠心病</span>
+            <span class="badge-tag normal">定期复购</span>
+          </div>
+          <hr class="divider">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">📋 当前用药清单：</div>
+          <div class="med-list">
+            <div class="med-item">
+              <span>氨氯地平 5mg</span>
+              <span class="badge-tag urgent">明天用完</span>
+            </div>
+            <div class="med-item">
+              <span>阿司匹林 100mg</span>
+              <span class="badge-tag warning">5天后用完</span>
+            </div>
+            <div class="med-item">
+              <span>辛伐他汀 20mg</span>
+              <span class="badge-tag success">库存充足</span>
+            </div>
+          </div>
+          <hr class="divider">
+          <div style="font-size:13px;">
+            <div><strong>⚠️ 过敏：</strong>青霉素类</div>
+            <div><strong>📅 上次到店：</strong>28天前</div>
+            <div><strong>💰 年消费：</strong>¥5,600</div>
+          </div>
+          <hr class="divider">
+          <div style="font-size:13px;padding:10px;background:var(--primary-bg);border-radius:8px;">
+            <strong style="color:var(--primary);">🤖 AI建议：</strong><br>
+            ① 提醒补充氨氯地平（明天断药）<br>
+            ② 建议搭配购买血压计（近期有优惠）<br>
+            ③ 天冷关怀：提醒注意保暖，心脑血管注意
+          </div>
+          <div class="activity-actions mt-12">
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="showToast('已发送5元优惠券')">发券</button>
+            <button class="btn btn-outline btn-sm" style="flex:1;">记录回访</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 库存提醒 -->
+      <div class="card">
+        <div class="card-title"><span class="icon">📦</span> 本店库存提醒</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="padding:10px;background:var(--danger-bg);border-radius:8px;font-size:13px;">
+            <div class="flex-between">
+              <strong>感冒灵颗粒</strong>
+              <span class="badge-tag urgent">仅剩23盒</span>
+            </div>
+            <div class="text-muted">预计需求65盒/周 · 已申请调拨</div>
+          </div>
+          <div style="padding:10px;background:var(--warning-bg);border-radius:8px;font-size:13px;">
+            <div class="flex-between">
+              <strong>氨氯地平片</strong>
+              <span class="badge-tag warning">仅剩12盒</span>
+            </div>
+            <div class="text-muted">预计需求45盒/周 · 补货中</div>
+          </div>
+          <div style="padding:10px;background:var(--success-bg);border-radius:8px;font-size:13px;">
+            <div class="flex-between">
+              <strong>二甲双胍片</strong>
+              <span class="badge-tag success">库存充足</span>
+            </div>
+            <div class="text-muted">当前86盒 · 周需28盒</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 今日学习 -->
+      <div class="card">
+        <div class="card-title"><span class="icon">📖</span> 今日知识卡</div>
+        <div style="padding:12px;background:var(--gray-50);border-radius:8px;font-size:13px;line-height:1.8;">
+          <strong>🧠 高血压冬季用药小贴士</strong><br>
+          冬季血压波动大，部分患者需调整剂量。若患者反映头晕、头痛加重，建议：<br>
+          ① 先量血压确认是否偏高<br>
+          ② 提醒患者勿自行加药<br>
+          ③ 建议尽快就医调整方案<br>
+          <span class="text-muted">来源：《基层高血压管理指南（2024版）》</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 3: 顾客端（手机模拟） -->
+<!-- ============================================================ -->
+<div class="panel" id="panel-customer">
+  <div class="section-title">📱 顾客端 · 微信小程序模拟</div>
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;">
+
+    <!-- Phone 1: 首页 -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span>9:41</span>
+        <span>📶 🔋 87%</span>
+      </div>
+      <div class="phone-header" style="background:linear-gradient(135deg,#16a34a,#22c55e);">
+        🏥 康寿大药房 · 您的健康管家
+      </div>
+      <div class="phone-body">
+        <!-- 用户信息 -->
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:12px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;">张</div>
+          <div>
+            <div style="font-weight:600;">张美兰</div>
+            <div style="font-size:12px;color:var(--gray-500);">💎 VIP会员 · 积分 2,350</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:12px;color:var(--success);">健康档案 →</div>
+          </div>
+        </div>
+
+        <!-- 健康提醒 -->
+        <div style="padding:14px;background:var(--danger-bg);border-radius:12px;margin-bottom:12px;border:1px solid #fecaca;">
+          <div style="font-size:14px;font-weight:600;color:var(--danger);">⏰ 用药提醒</div>
+          <div style="font-size:13px;margin-top:4px;">
+            您的<strong>氨氯地平（降压药）</strong>预计明天用完<br>
+            明日降温至-3℃，请注意保暖 🧣
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%;justify-content:center;" onclick="showToast('已预约到店取药')">
+            📍 立即预约到店取药
+          </button>
+        </div>
+
+        <!-- 专属优惠 -->
+        <div style="padding:14px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:600;">🎫 专属优惠券</div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <div style="flex:1;background:#fff;border-radius:8px;padding:10px;text-align:center;border:1px dashed var(--warning);">
+              <div style="font-size:20px;font-weight:700;color:var(--danger);">¥5</div>
+              <div style="font-size:11px;color:var(--gray-500);">降压药专享</div>
+              <div style="font-size:11px;color:var(--warning);">满30可用</div>
+            </div>
+            <div style="flex:1;background:#fff;border-radius:8px;padding:10px;text-align:center;border:1px dashed var(--warning);">
+              <div style="font-size:20px;font-weight:700;color:var(--danger);">¥8</div>
+              <div style="font-size:11px;color:var(--gray-500);">心脑血管满减</div>
+              <div style="font-size:11px;color:var(--warning);">满50可用</div>
+            </div>
+          </div>
+          <button class="btn btn-success btn-sm" style="margin-top:8px;width:100%;justify-content:center;background:#f59e0b;color:#fff;" onclick="showToast('优惠券已领取！')">
+            一键领取全部优惠
+          </button>
+        </div>
+
+        <!-- 用药日历 -->
+        <div style="padding:14px;background:#fff;border-radius:12px;border:1px solid var(--gray-200);margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:600;margin-bottom:8px;">💊 我的用药日历</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span>氨氯地平 5mg/日</span>
+              <span style="color:var(--danger);font-weight:600;">明天用完 ⚠️</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill red" style="width:5%;"></div></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:4px;">
+              <span>阿司匹林 100mg/日</span>
+              <span style="color:var(--warning);">还剩12天</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill orange" style="width:40%;"></div></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:4px;">
+              <span>辛伐他汀 20mg/晚</span>
+              <span style="color:var(--success);">还剩25天</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill green" style="width:80%;"></div></div>
+          </div>
+        </div>
+
+        <!-- 天气健康提示 -->
+        <div style="padding:14px;background:linear-gradient(135deg,#e0f2fe,#bae6fd);border-radius:12px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:600;">🌡️ 今日健康提示</div>
+          <div style="font-size:13px;margin-top:4px;line-height:1.8;">
+            明日大降温（-3℃），高血压患者请注意：<br>
+            ✅ 出门戴帽子围巾，避免头部受凉<br>
+            ✅ 早晨起床动作放慢，避免体位性低血压<br>
+            ✅ 按时服药，不要自行调整剂量
+          </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div style="display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid var(--gray-200);margin-top:8px;">
+          <div style="text-align:center;font-size:12px;color:var(--primary);">
+            <div style="font-size:20px;">🏠</div>首页
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--gray-400);">
+            <div style="font-size:20px;">💊</div>用药
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--gray-400);">
+            <div style="font-size:20px;">🎫</div>优惠
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--gray-400);">
+            <div style="font-size:20px;">👤</div>我的
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone 2: 企微消息 -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span>9:43</span>
+        <span>📶 🔋 86%</span>
+      </div>
+      <div class="phone-header" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);">
+        💬 企业微信 · 康寿药房
+      </div>
+      <div class="phone-body" style="background:#ededed;">
+        <!-- 消息气泡 -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <div style="width:36px;height:36px;border-radius:4px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0;">药</div>
+            <div style="background:#fff;border-radius:0 12px 12px 12px;padding:12px;max-width:80%;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,0.08);">
+              <div style="font-size:12px;color:var(--primary);margin-bottom:4px;">康寿大药房 · 小王</div>
+              阿姨您好！😊 明天大降温到-3℃，您的降压药差不多该补了吧？我们给您留了一份，到店还能免费量个血压～<br><br>
+              🎫 专属优惠：心脑血管用药满50减8<br>
+              📍 点击预约到店时间
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;">
+            <div style="background:#95ec69;border-radius:12px 0 12px 12px;padding:12px;max-width:80%;font-size:14px;">
+              小王啊，好的好的，我明天上午过来拿吧
+            </div>
+            <div style="width:36px;height:36px;border-radius:4px;background:#ccc;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">张</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <div style="width:36px;height:36px;border-radius:4px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0;">药</div>
+            <div style="background:#fff;border-radius:0 12px 12px 12px;padding:12px;max-width:80%;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,0.08);">
+              好的阿姨！我帮您留好，明天上午等您来～出门记得多穿点，注意保暖！🧣<br><br>
+              <span style="color:var(--primary);font-size:13px;">📍 已为您预约：明日 9:00-12:00 朝阳路店</span>
+            </div>
+          </div>
+
+          <div style="text-align:center;font-size:12px;color:var(--gray-400);margin:16px 0 8px;">—— 系统记录 ——</div>
+          <div style="text-align:center;font-size:12px;color:var(--gray-500);background:rgba(0,0,0,0.05);padding:6px;border-radius:4px;">
+            ✅ 触达成功 | 预约到店 | 已同步至CRM
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✅ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function approveActivity(name) {
+  showToast(name + ' 已批准发布，正在推送至目标会员...');
+}
+
+function sendMessage(name) {
+  showToast('已通过企微发送消息给' + name);
+}
+
+function askDrug() {
+  const q = document.getElementById('drugQuestion').value;
+  if (!q) return;
+  const answers = {
+    default: `<strong>🤖 AI药师助手回答：</strong><br><br>
+      根据药品说明书和临床用药指南，为您解答如下：<br><br>
+      关于您的问题"${q}"：<br>
+      • 建议遵医嘱使用，不要自行调整剂量<br>
+      • 服药期间注意观察身体反应<br>
+      • 如有不适，建议患者及时就医<br><br>
+      <span style="color:var(--gray-400);font-size:12px;">⚠️ 以上为AI辅助参考，具体用药请以医生处方为准</span>`
+  };
+  const el = document.getElementById('drugAnswer');
+  el.innerHTML = answers.default;
+  el.style.display = 'block';
+}
+
+function showModal(type) {
+  const overlay = document.getElementById('modalOverlay');
+  const content = document.getElementById('modalContent');
+  
+  if (type === 'transfer') {
+    content.innerHTML = `
+      <h3>📦 智能调拨建议</h3>
+      <div style="padding:16px;background:var(--primary-bg);border-radius:8px;margin-bottom:16px;">
+        <strong>AI分析：</strong>朝阳路店感冒灵库存仅剩23盒，预计未来7天需65盒（天气降温 + 流感趋势上升）。建国路店当前库存86盒，需求预计30盒，有调拨空间。
+      </div>
+      <table style="margin-bottom:16px;">
+        <tr><th>调出门店</th><td>建国路店（库存86盒，预计需30盒）</td></tr>
+        <tr><th>调入门店</th><td>朝阳路店（库存23盒，预计需65盒）</td></tr>
+        <tr><th>调拨数量</th><td><strong>40盒</strong>（建议）</td></tr>
+        <tr><th>调拨金额</th><td>¥320（＜500元，店长可直接确认）</td></tr>
+        <tr><th>预计完成</th><td>2小时内</td></tr>
+      </table>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-success" onclick="showToast('调拨单已生成，已通知双方店长');closeModal();">确认调拨</button>
+        <button class="btn btn-outline" onclick="closeModal()">取消</button>
+      </div>
+    `;
+  } else if (type === 'memberProfile') {
+    content.innerHTML = `
+      <h3>👤 会员档案 · 张美兰</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div><strong>年龄：</strong>65岁</div>
+        <div><strong>会员等级：</strong>💎 VIP</div>
+        <div><strong>注册门店：</strong>朝阳路店</div>
+        <div><strong>累计消费：</strong>¥18,650</div>
+        <div><strong>年消费：</strong>¥4,200</div>
+        <div><strong>积分余额：</strong>2,350</div>
+      </div>
+      <hr class="divider">
+      <h4 style="margin-bottom:8px;">🏷️ 标签</h4>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+        <span class="badge-tag disease">高血压</span>
+        <span class="badge-tag success">高价值</span>
+        <span class="badge-tag normal">定期复购</span>
+        <span class="badge-tag normal">品牌忠诚</span>
+      </div>
+      <h4 style="margin-bottom:8px;">💊 当前用药</h4>
+      <table>
+        <tr><th>药品</th><th>剂量</th><th>频次</th><th>预计用完</th></tr>
+        <tr><td>氨氯地平</td><td>5mg</td><td>1次/日</td><td style="color:var(--danger);">明天</td></tr>
+        <tr><td>阿司匹林</td><td>100mg</td><td>1次/日</td><td>12天后</td></tr>
+        <tr><td>辛伐他汀</td><td>20mg</td><td>1次/晚</td><td>25天后</td></tr>
+      </table>
+      <h4 style="margin:12px 0 8px;">⚠️ 注意事项</h4>
+      <div style="padding:10px;background:var(--danger-bg);border-radius:8px;font-size:13px;">
+        <strong>过敏：</strong>青霉素类<br>
+        <strong>禁忌：</strong>避免与葡萄柚同服（影响氨氯地平代谢）
+      </div>
+      <h4 style="margin:12px 0 8px;">📊 触达历史</h4>
+      <div style="font-size:13px;">
+        <div>• 5月10日 企微消息（复购提醒）→ ✅ 到店</div>
+        <div>• 4月15日 短信（促销活动）→ ❌ 未响应</div>
+        <div>• 4月8日 企微消息（用药提醒）→ ✅ 到店</div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:var(--primary-bg);border-radius:8px;font-size:13px;">
+        <strong>📌 AI洞察：</strong>该会员对企微消息响应率高（80%），对短信促销不敏感。建议以"健康关怀"为主，避免强推销。最佳触达时间：上午9-11点。
+      </div>
+    `;
+  } else if (type === 'editActivity') {
+    content.innerHTML = `
+      <h3>✏️ 修改活动方案</h3>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">活动名称</label>
+        <input type="text" value="寒潮来袭，健康先行" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">目标人群</label>
+        <input type="text" value="高血压会员 3,240人（断药期优先487人）" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">优惠策略</label>
+        <input type="text" value="心脑血管用药满50减8 + 免费血压测量" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">触达渠道</label>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <label style="font-size:13px;"><input type="checkbox" checked> 企微消息</label>
+          <label style="font-size:13px;"><input type="checkbox" checked> 小程序推送</label>
+          <label style="font-size:13px;"><input type="checkbox"> 短信</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-success" onclick="showToast('修改后的活动已发布');closeModal();">保存并发布</button>
+        <button class="btn btn-outline" onclick="closeModal()">取消</button>
+      </div>
+    `;
+  }
+  
+  overlay.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+</script>
+
+</body>
+</html>
