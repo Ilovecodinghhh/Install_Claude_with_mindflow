@@ -638,34 +638,177 @@ tr:hover td { background: var(--gray-50); }
     </div>
   </div>
 
-  <!-- 会员分群 -->
+  <!-- 会员分层运营体系 -->
   <div class="card">
-    <div class="card-title"><span class="icon">👥</span> 会员分群运营</div>
-    <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);">
-      <div style="text-align:center;padding:16px;background:var(--primary-bg);border-radius:8px;">
-        <div style="font-size:24px;font-weight:700;color:var(--primary);">32,450</div>
-        <div class="text-muted">慢病会员</div>
-        <div style="margin-top:4px;"><span class="badge-tag disease">高血压 18,230</span></div>
+    <div class="card-title"><span class="icon">👑</span> 会员分层运营体系（RFM模型）</div>
+    
+    <!-- 金字塔分层 -->
+    <div style="display:flex;gap:24px;margin-bottom:20px;">
+      <div style="flex:1;">
+        <!-- 金字塔可视化 -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="width:20%;padding:12px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border-radius:8px;text-align:center;cursor:pointer;" onclick="showModal('tierDetail')">
+            <div style="font-size:18px;font-weight:700;">💎 钻石</div>
+            <div style="font-size:12px;opacity:0.9;">4,230人 · 占5%</div>
+            <div style="font-size:11px;opacity:0.8;">贡献35%营收</div>
+          </div>
+          <div style="width:40%;padding:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:700;">🥇 金卡</div>
+            <div style="font-size:12px;opacity:0.9;">15,680人 · 占15%</div>
+            <div style="font-size:11px;opacity:0.8;">贡献30%营收</div>
+          </div>
+          <div style="width:60%;padding:12px;background:linear-gradient(135deg,#94a3b8,#64748b);color:#fff;border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:700;">🥈 银卡</div>
+            <div style="font-size:12px;opacity:0.9;">25,340人 · 占30%</div>
+            <div style="font-size:11px;opacity:0.8;">贡献25%营收</div>
+          </div>
+          <div style="width:80%;padding:12px;background:var(--gray-200);border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:700;">👤 普通</div>
+            <div style="font-size:12px;color:var(--gray-600);">42,312人 · 占50%</div>
+            <div style="font-size:11px;color:var(--gray-500);">贡献10%营收</div>
+          </div>
+        </div>
       </div>
-      <div style="text-align:center;padding:16px;background:var(--success-bg);border-radius:8px;">
-        <div style="font-size:24px;font-weight:700;color:var(--success);">15,680</div>
-        <div class="text-muted">高价值会员</div>
-        <div style="margin-top:4px;"><span class="badge-tag success">年消费＞3000</span></div>
+      
+      <!-- 分层KPI对比 -->
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:14px;margin-bottom:12px;">📊 各层级核心指标对比</div>
+        <table style="font-size:13px;">
+          <thead>
+            <tr><th>指标</th><th>💎钻石</th><th>🥇金卡</th><th>🥈银卡</th><th>👤普通</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>月均到店</td><td style="color:var(--primary);font-weight:600;">4.2次</td><td>2.1次</td><td>0.8次</td><td>0.2次</td></tr>
+            <tr><td>复购率</td><td style="color:var(--primary);font-weight:600;">78%</td><td>52%</td><td>31%</td><td>8%</td></tr>
+            <tr><td>客单价</td><td style="color:var(--primary);font-weight:600;">¥186</td><td>¥95</td><td>¥52</td><td>¥28</td></tr>
+            <tr><td>响应率</td><td style="color:var(--primary);font-weight:600;">32%</td><td>15%</td><td>6%</td><td>1.2%</td></tr>
+            <tr><td>流失率/年</td><td style="color:var(--success);">3%</td><td>8%</td><td>18%</td><td>35%</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div style="text-align:center;padding:16px;background:var(--warning-bg);border-radius:8px;">
-        <div style="font-size:24px;font-weight:700;color:var(--warning);">8,934</div>
-        <div class="text-muted">流失预警</div>
-        <div style="margin-top:4px;"><span class="badge-tag warning">＞60天未到店</span></div>
+    </div>
+
+    <!-- 层级迁移预警 -->
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;padding:14px;background:var(--danger-bg);border-radius:8px;border-left:4px solid var(--danger);">
+        <div style="font-weight:600;font-size:14px;color:var(--danger);">⚠️ 降级风险预警</div>
+        <div style="font-size:13px;margin-top:8px;">
+          <strong>28名</strong>钻石会员近30天消费下滑＞40%<br>
+          <strong>65名</strong>金卡会员近45天未到店
+        </div>
+        <button class="btn btn-danger btn-sm mt-12" onclick="showModal('tierDetail')">查看详情 · 生成挽留方案</button>
       </div>
-      <div style="text-align:center;padding:16px;background:var(--danger-bg);border-radius:8px;">
-        <div style="font-size:24px;font-weight:700;color:var(--danger);">2,187</div>
-        <div class="text-muted">断药期内</div>
-        <div style="margin-top:4px;"><span class="badge-tag urgent">需紧急触达</span></div>
+      <div style="flex:1;padding:14px;background:var(--success-bg);border-radius:8px;border-left:4px solid var(--success);">
+        <div style="font-weight:600;font-size:14px;color:var(--success);">🎉 本月升级</div>
+        <div style="font-size:13px;margin-top:8px;">
+          <strong>156名</strong>银卡 → 金卡（消费增长达标）<br>
+          <strong>12名</strong>金卡 → 钻石（忠诚度达标）
+        </div>
+        <button class="btn btn-success btn-sm mt-12" onclick="showToast('已发送升级恭喜通知')">发送升级恭喜通知</button>
       </div>
-      <div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:8px;">
-        <div style="font-size:24px;font-weight:700;color:#059669;">1,876</div>
-        <div class="text-muted">过敏体质</div>
-        <div style="margin-top:4px;"><span class="badge-tag disease">春季重点关注</span></div>
+      <div style="flex:1;padding:14px;background:var(--primary-bg);border-radius:8px;border-left:4px solid var(--primary);">
+        <div style="font-weight:600;font-size:14px;color:var(--primary);">📋 分层触达策略</div>
+        <div style="font-size:13px;margin-top:8px;">
+          💎 每周1-2次 · 专属1对1<br>
+          🥇 每周1次 · 企微精准<br>
+          🥈 双周1次 · 小程序推送<br>
+          👤 每月1次 · 大促短信
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 线下活动管理 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🏥</span> 线下健康活动管理</div>
+    <div class="flex-between mb-16">
+      <div class="text-muted">管理门店线下活动，AI智能匹配目标人群精准推送</div>
+      <button class="btn btn-primary btn-sm" onclick="showModal('createEvent')">+ 创建活动</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>活动名称</th>
+            <th>类型</th>
+            <th>门店</th>
+            <th>时间</th>
+            <th>名额</th>
+            <th>已报名</th>
+            <th>签到率</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>春季社区义诊·心内科专家</strong></td>
+            <td><span class="badge-tag disease">义诊</span></td>
+            <td>朝阳路店</td>
+            <td>5月20日 9:00</td>
+            <td>50人</td>
+            <td style="color:var(--primary);font-weight:600;">42人</td>
+            <td>—</td>
+            <td><span class="badge-tag normal">报名中</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('已向832名匹配会员推送活动通知')">AI推送</button></td>
+          </tr>
+          <tr>
+            <td><strong>免费血糖检测日</strong></td>
+            <td><span class="badge-tag success">检测</span></td>
+            <td>建国路店</td>
+            <td>5月18日 10:00</td>
+            <td>80人</td>
+            <td>67人</td>
+            <td style="color:var(--success);font-weight:600;">84%</td>
+            <td><span class="badge-tag success">已完成</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('复盘报告已生成')">查看复盘</button></td>
+          </tr>
+          <tr>
+            <td><strong>慢病管理知识讲座</strong></td>
+            <td><span class="badge-tag warning">讲座</span></td>
+            <td>中心店</td>
+            <td>5月25日 14:00</td>
+            <td>40人</td>
+            <td style="color:var(--warning);">18人</td>
+            <td>—</td>
+            <td><span class="badge-tag normal">报名中</span></td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('已向1,245名慢病会员推送邀请')">AI推送</button></td>
+          </tr>
+          <tr>
+            <td><strong>骨密度免费筛查</strong></td>
+            <td><span class="badge-tag disease">检测</span></td>
+            <td>大学城店</td>
+            <td>5月22日 9:00</td>
+            <td>60人</td>
+            <td>55人</td>
+            <td>—</td>
+            <td><span class="badge-tag warning">即将开始</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('已发送活动前1天提醒')">发提醒</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- 活动效果概览 -->
+    <div style="display:flex;gap:12px;margin-top:16px;">
+      <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--primary);">23</div>
+        <div class="text-muted">本月活动场次</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--success);">1,280</div>
+        <div class="text-muted">累计参与人次</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--warning);">82%</div>
+        <div class="text-muted">平均签到率</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--primary);">73%</div>
+        <div class="text-muted">活动后7天到店率</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--success);">186</div>
+        <div class="text-muted">活动新增会员</div>
       </div>
     </div>
   </div>
@@ -906,10 +1049,11 @@ tr:hover td { background: var(--gray-50); }
           <div style="width:48px;height:48px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;">张</div>
           <div>
             <div style="font-weight:600;">张美兰</div>
-            <div style="font-size:12px;color:var(--gray-500);">💎 VIP会员 · 积分 2,350</div>
+            <div style="font-size:12px;color:var(--gray-500);">💎 钻石会员 · 积分 2,350</div>
           </div>
           <div style="margin-left:auto;text-align:right;">
-            <div style="font-size:12px;color:var(--success);">健康档案 →</div>
+            <div style="font-size:11px;padding:3px 8px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border-radius:10px;">💎 钻石</div>
+            <div style="font-size:11px;color:var(--success);margin-top:2px;">健康档案 →</div>
           </div>
         </div>
 
@@ -969,6 +1113,76 @@ tr:hover td { background: var(--gray-50); }
           </div>
         </div>
 
+        <!-- 线下健康活动 -->
+        <div style="padding:14px;background:#fff;border-radius:12px;border:1px solid var(--gray-200);margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:600;">🏥 附近健康活动</div>
+            <div style="font-size:12px;color:var(--primary);">查看全部 →</div>
+          </div>
+          
+          <!-- 活动1：义诊（推荐） -->
+          <div style="padding:12px;background:linear-gradient(135deg,#faf5ff,#f3e8ff);border:1px solid #e9d5ff;border-radius:10px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:12px;padding:2px 6px;background:#7c3aed;color:#fff;border-radius:4px;">推荐</span>
+                  <span style="font-size:11px;color:var(--gray-500);">离您0.8km</span>
+                </div>
+                <div style="font-weight:600;font-size:14px;margin-top:4px;">💓 心内科专家义诊</div>
+                <div style="font-size:12px;color:var(--gray-600);margin-top:2px;">
+                  📍 朝阳路康寿药房<br>
+                  🕐 5月20日 周二 9:00-12:00<br>
+                  👥 剩余名额：8/50
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center;background:#7c3aed;" onclick="showToast('预约成功！已加入您的日历提醒')">立即预约</button>
+              <button class="btn btn-outline btn-sm" style="flex:1;justify-content:center;" onclick="showToast('已设置开始提醒')">🔔 提醒我</button>
+            </div>
+          </div>
+
+          <!-- 活动2：血糖检测 -->
+          <div style="padding:12px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;margin-bottom:8px;">
+            <div style="font-weight:600;font-size:13px;">🩸 免费血糖检测日</div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:2px;">
+              📍 建国路店 · 5月18日 10:00 · 👥 13个名额
+            </div>
+            <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:6px;" onclick="showToast('预约成功！')">一键预约</button>
+          </div>
+
+          <!-- 活动3：健康讲座 -->
+          <div style="padding:12px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;">
+            <div style="font-weight:600;font-size:13px;">📚 慢病管理知识讲座</div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:2px;">
+              📍 中心店 · 5月25日 14:00 · 👥 22个名额
+            </div>
+            <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:6px;" onclick="showToast('预约成功！')">一键预约</button>
+          </div>
+        </div>
+
+        <!-- 我的会员等级 -->
+        <div style="padding:14px;background:linear-gradient(135deg,#faf5ff,#ede9fe);border-radius:12px;border:1px solid #ddd6fe;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:600;">👑 我的会员等级</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+            <div style="width:48px;height:48px;background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;">💎</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:16px;color:#7c3aed;">钻石会员</div>
+              <div style="font-size:12px;color:var(--gray-600);">年消费 ¥4,200 · 月均到店3.5次</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--gray-600);">
+            <div style="margin-bottom:4px;">🎁 您的专属特权：</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">全场9折</span>
+              <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">免费送药上门</span>
+              <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">义诊VIP通道</span>
+              <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">生日双倍积分</span>
+              <span style="padding:2px 8px;background:#fff;border-radius:10px;border:1px solid #ddd6fe;font-size:11px;">免费健康检测</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 天气健康提示 -->
         <div style="padding:14px;background:linear-gradient(135deg,#e0f2fe,#bae6fd);border-radius:12px;margin-bottom:12px;">
           <div style="font-size:14px;font-weight:600;">🌡️ 今日健康提示</div>
@@ -987,6 +1201,9 @@ tr:hover td { background: var(--gray-50); }
           </div>
           <div style="text-align:center;font-size:12px;color:var(--gray-400);">
             <div style="font-size:20px;">💊</div>用药
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--gray-400);">
+            <div style="font-size:20px;">🏥</div>活动
           </div>
           <div style="text-align:center;font-size:12px;color:var(--gray-400);">
             <div style="font-size:20px;">🎫</div>优惠
@@ -1147,6 +1364,114 @@ function showModal(type) {
       </div>
       <div style="margin-top:12px;padding:10px;background:var(--primary-bg);border-radius:8px;font-size:13px;">
         <strong>📌 AI洞察：</strong>该会员对企微消息响应率高（80%），对短信促销不敏感。建议以"健康关怀"为主，避免强推销。最佳触达时间：上午9-11点。
+      </div>
+    `;
+  } else if (type === 'tierDetail') {
+    content.innerHTML = `
+      <h3>⚠️ 钻石会员降级风险 · 28人</h3>
+      <div style="padding:12px;background:var(--danger-bg);border-radius:8px;margin-bottom:16px;font-size:13px;">
+        <strong>预警规则：</strong>钻石会员近30天消费下降＞40%或超过15天未到店，触发降级风险预警。保护期剩余1个月。
+      </div>
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>会员</th><th>等级</th><th>最近到店</th><th>消费变化</th><th>风险原因</th><th>建议动作</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>王大爷</strong><br><span class="text-muted">78岁 · 高血压+冠心病</span></td>
+            <td>💎</td>
+            <td style="color:var(--danger);">32天前</td>
+            <td style="color:var(--danger);">↓52%</td>
+            <td>长期未到店</td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('已生成挽留方案并推送至店长');closeModal();">生成挽留方案</button></td>
+          </tr>
+          <tr>
+            <td><strong>刘阿姨</strong><br><span class="text-muted">67岁 · 糖尿病</span></td>
+            <td>💎</td>
+            <td style="color:var(--warning);">18天前</td>
+            <td style="color:var(--danger);">↓45%</td>
+            <td>消费频次下降</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('已发送专属优惠券')">发挽留券</button></td>
+          </tr>
+          <tr>
+            <td><strong>陈先生</strong><br><span class="text-muted">55岁 · 高血脂</span></td>
+            <td>💎</td>
+            <td>12天前</td>
+            <td style="color:var(--danger);">↓41%</td>
+            <td>客单价下降</td>
+            <td><button class="btn btn-outline btn-sm">查看详情</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:12px;background:var(--primary-bg);border-radius:8px;font-size:13px;">
+        <strong>🤖 AI批量挽留建议：</strong><br>
+        • 28名风险会员发放"专属9折续购券"（有效期15天）<br>
+        • 邀请参加5月20日心内科义诊（VIP专座）<br>
+        • 店长/专属客服1对1电话关怀<br>
+        预计挽留成功率：72%（基于历史数据）
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-success" onclick="showToast('批量挽留方案已下发至各门店');closeModal();">批量执行挽留</button>
+        <button class="btn btn-outline" onclick="closeModal()">逐个处理</button>
+      </div>
+    `;
+  } else if (type === 'createEvent') {
+    content.innerHTML = `
+      <h3>🏥 创建线下健康活动</h3>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">活动类型</label>
+        <select style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+          <option>🩺 社区义诊</option>
+          <option>🩸 健康检测</option>
+          <option>📚 健康讲座</option>
+          <option>💎 会员日</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">活动名称</label>
+        <input type="text" placeholder="例：春季社区义诊·心内科专家" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:13px;color:var(--gray-600);">举办门店</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+            <option>朝阳路店</option>
+            <option>建国路店</option>
+            <option>中心店</option>
+            <option>大学城店</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px;color:var(--gray-600);">名额上限</label>
+          <input type="number" value="50" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:13px;color:var(--gray-600);">活动日期</label>
+          <input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:13px;color:var(--gray-600);">时间段</label>
+          <input type="text" value="9:00 - 12:00" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-top:4px;">
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--gray-600);">目标人群标签（AI将自动匹配推送）</label>
+        <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
+          <label style="font-size:13px;"><input type="checkbox" checked> 高血压</label>
+          <label style="font-size:13px;"><input type="checkbox" checked> 心脑血管</label>
+          <label style="font-size:13px;"><input type="checkbox"> 糖尿病</label>
+          <label style="font-size:13px;"><input type="checkbox"> 老年会员(≥65岁)</label>
+          <label style="font-size:13px;"><input type="checkbox"> 过敏体质</label>
+          <label style="font-size:13px;"><input type="checkbox"> 钻石/金卡会员</label>
+        </div>
+      </div>
+      <div style="padding:10px;background:var(--primary-bg);border-radius:8px;font-size:13px;margin-bottom:12px;">
+        🤖 <strong>AI预估：</strong>匹配目标人群约 832 人，预计报名率 60%（~499人），建议名额设为50-80。
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-success" onclick="showToast('活动已创建！AI正在向832名匹配会员推送邀请...');closeModal();">创建并推送</button>
+        <button class="btn btn-outline" onclick="showToast('活动已创建为草稿');closeModal();">保存草稿</button>
+        <button class="btn btn-outline" onclick="closeModal()">取消</button>
       </div>
     `;
   } else if (type === 'editActivity') {
