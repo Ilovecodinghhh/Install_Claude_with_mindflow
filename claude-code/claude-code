@@ -1,0 +1,54 @@
+#!/bin/bash
+# Claude Code launcher — routes through local proxy to ai.mindflow.com.cn
+# Usage:
+#   claude-code [claude args...]        # interactive or -p "prompt"
+#   claude-code --proxy-start           # just (re)start the proxy
+#   claude-code --proxy-stop            # stop the proxy
+#   claude-code --proxy-status          # check proxy status
+set -euo pipefail
+
+PROXY_PORT=18443
+WORKSPACE="$HOME/.openclaw/workspace"
+SERVICE="claude-code-proxy.service"
+
+# ── helpers ──────────────────────────────────────────────────────────
+proxy_running() {
+  systemctl --user is-active "$SERVICE" &>/dev/null
+}
+
+ensure_hosts() {
+  if ! grep -q '127.0.0.1 api.anthropic.com' /etc/hosts 2>/dev/null; then
+    echo "127.0.0.1 api.anthropic.com" | sudo tee -a /etc/hosts >/dev/null
+    echo "[claude-code] Added api.anthropic.com → 127.0.0.1 to /etc/hosts"
+  fi
+}
+
+start_proxy() {
+  if proxy_running; then return; fi
+  systemctl --user start "$SERVICE"
+  sleep 1
+  if proxy_running; then
+    echo "[claude-code] Proxy started"
+  else
+    echo "[claude-code] ERROR: proxy failed to start" >&2
+    journalctl --user -u "$SERVICE" -n 5 --no-pager >&2
+    exit 1
+  fi
+}
+
+# ── commands ─────────────────────────────────────────────────────────
+case "${1:-}" in
+  --proxy-start)   ensure_hosts; start_proxy; exit 0 ;;
+  --proxy-stop)    systemctl --user stop "$SERVICE"; echo "[claude-code] Proxy stopped"; exit 0 ;;
+  --proxy-status)  systemctl --user status "$SERVICE" --no-pager; exit 0 ;;
+esac
+
+ensure_hosts
+start_proxy
+
+cd "$WORKSPACE"
+exec env \
+  NODE_TLS_REJECT_UNAUTHORIZED=0 \
+  ANTHROPIC_BASE_URL="https://127.0.0.1:${PROXY_PORT}/v1" \
+  ANTHROPIC_API_KEY="sk-09xheHI5HBOQ31SFvBW1DgAAY9JscYpJa1Dj9oySgFejX6ao" \
+  claude --bare --model claude-opus-4-6 --dangerously-skip-permissions "$@"
