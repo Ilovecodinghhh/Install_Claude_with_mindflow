@@ -190,10 +190,52 @@ Once configured, Claude Code gets these Playwright MCP tools:
 - **Browser fails to launch** — Install system dependencies: `npx playwright install-deps chromium`
 - **Display errors on headless server** — Ensure `--headless` is in the args. If still failing, set `DISPLAY=` (empty) in your environment.
 
+## Custom Context Window Size
+
+Claude Code defaults to a 200k token context window. You can increase this (up to the model's maximum) by setting two environment variables in the launcher script:
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CLAUDE_CODE_MAX_CONTEXT_TOKENS` | Maximum tokens before auto-compaction triggers | `200000` |
+| `DISABLE_COMPACT` | Disable automatic context compaction entirely | unset |
+
+### Configuration
+
+Add these to the `exec env` block in the `claude-code` launcher script:
+
+```bash
+exec env \
+  NODE_TLS_REJECT_UNAUTHORIZED=0 \
+  ANTHROPIC_BASE_URL="https://127.0.0.1:${PROXY_PORT}/v1" \
+  ANTHROPIC_API_KEY="<your-key>" \
+  CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000 \
+  DISABLE_COMPACT=1 \
+  claude --bare --model claude-opus-4-6 --dangerously-skip-permissions "$@"
+```
+
+### How It Works
+
+- **`CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000`** — Sets the operational context limit to 500k tokens. Claude Code won't trigger compaction until this threshold is reached.
+- **`DISABLE_COMPACT=1`** — Prevents automatic conversation summarization, so you get the full raw context up to the token limit.
+
+> **Note:** Claude Code may still *report* 200k as the model's context window (this is hardcoded in its model capabilities map), but the actual operational limit is controlled by `CLAUDE_CODE_MAX_CONTEXT_TOKENS`. You can verify it's active by asking Claude Code to check the environment variable.
+
+### Common Sizes
+
+| Setting | Use Case |
+|---------|----------|
+| `200000` | Default — good for most tasks |
+| `500000` | Large codebases, long sessions |
+| `1000000` | Maximum — for models that support 1M context |
+
+> **Warning:** Larger context windows consume more tokens per request, which increases API costs and latency. Only increase if needed.
+
 ## Tested With
 
 - Claude Code v2.1.143
 - Node.js v24.14.0
 - API: `ai.mindflow.com.cn/v1` with model `claude-opus-4-6`
 - Playwright MCP v0.0.75 with Chromium Headless Shell 148.0
-- Verified: file system access, bash execution, internet connectivity, **browser navigation and DOM reading**
+- Verified: file system access, bash execution, internet connectivity, **browser navigation and DOM reading**, **500k context window**
