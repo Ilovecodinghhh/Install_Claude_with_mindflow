@@ -112,9 +112,88 @@ tools/claude-code/
 - `--bare` mode skips hooks/LSP/plugins but does NOT skip model validation
 - `--dangerously-skip-permissions` is needed for non-interactive (`-p`) mode with tool access
 
+## Browser Support (Playwright MCP)
+
+Claude Code doesn't include browser tools by default — it only ships with Bash, Read, Edit, WebFetch, and WebSearch. To give it full browser control (navigate, click, screenshot, fill forms, etc.), add the **Playwright MCP server**.
+
+### 1. Install the Playwright MCP package and browser
+
+```bash
+npm install -g @playwright/mcp
+npx playwright install chromium
+```
+
+### 2. Create `.mcp.json` in your workspace root
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "playwright-mcp",
+      "args": ["--headless"]
+    }
+  }
+}
+```
+
+> **Note:** Use `--headless` for servers without a display. Remove it if you want to see the browser window on a desktop environment.
+
+### 3. Auto-approve browser tool permissions
+
+Add `mcp__playwright__*` to your allowed tools in `~/.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__playwright__*"
+    ]
+  }
+}
+```
+
+Without this, Claude Code will prompt for approval on every browser action.
+
+### 4. Verify
+
+```bash
+claude-code -p "Navigate to https://example.com and tell me the heading text."
+```
+
+Expected output should mention **"Example Domain"** — confirming Playwright launched headless Chromium, navigated to the page, and read the DOM.
+
+### Available Browser Tools
+
+Once configured, Claude Code gets these Playwright MCP tools:
+
+| Tool | Description |
+|------|-------------|
+| `browser_navigate` | Navigate to a URL |
+| `browser_snapshot` | Capture accessibility snapshot of the page |
+| `browser_click` | Click an element |
+| `browser_type` | Type text into an input |
+| `browser_screenshot` | Take a PNG screenshot |
+| `browser_hover` | Hover over an element |
+| `browser_select_option` | Select from dropdowns |
+| `browser_drag` | Drag and drop |
+| `browser_press_key` | Press keyboard keys |
+| `browser_tab_*` | Manage browser tabs |
+
+### Troubleshooting
+
+- **"Cannot find playwright-mcp"** — Make sure `npm root -g` is in your PATH, or use the full path in `.mcp.json`: `"command": "/full/path/to/playwright-mcp"`
+- **Browser fails to launch** — Install system dependencies: `npx playwright install-deps chromium`
+- **Display errors on headless server** — Ensure `--headless` is in the args. If still failing, set `DISPLAY=` (empty) in your environment.
+
 ## Tested With
 
 - Claude Code v2.1.143
 - Node.js v24.14.0
 - API: `ai.mindflow.com.cn/v1` with model `claude-opus-4-6`
-- Verified: file system access, bash execution, internet connectivity
+- Playwright MCP v0.0.75 with Chromium Headless Shell 148.0
+- Verified: file system access, bash execution, internet connectivity, **browser navigation and DOM reading**
