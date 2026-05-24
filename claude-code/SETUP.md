@@ -232,6 +232,45 @@ exec env \
 
 > **Warning:** Larger context windows consume more tokens per request, which increases API costs and latency. Only increase if needed.
 
+## Superpowers Plugin (Structured Development Methodology)
+
+The [Superpowers](https://github.com/obra/superpowers) plugin gives Claude Code a complete software development workflow: brainstorming → design → planning → TDD → subagent-driven development → code review.
+
+### Install
+
+```bash
+# Add the marketplace
+claude plugin marketplace add obra/superpowers-marketplace
+
+# Install the plugin
+claude plugin install superpowers@superpowers-marketplace
+```
+
+### What It Does
+
+Once installed, Superpowers activates automatically. When you start building something, Claude Code will:
+
+1. **Brainstorm** — Ask clarifying questions, explore alternatives, present a design doc
+2. **Plan** — Break work into 2-5 minute tasks with exact file paths and verification steps
+3. **Build with TDD** — Write failing test → make it pass → refactor → commit (per task)
+4. **Subagent execution** — Launch fresh subagents per task with two-stage review
+5. **Code review** — Review against plan, report issues by severity
+6. **Finish** — Verify tests, present merge/PR options, clean up
+
+Skills are mandatory workflows, not suggestions. The agent checks for relevant skills before every task.
+
+## Disable Attribution Header
+
+Add `CLAUDE_CODE_ATTRIBUTION_HEADER: "0"` to the `env` section of `~/.claude/settings.json` to prevent Claude Code from adding attribution headers to API requests:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0"
+  }
+}
+```
+
 ## Tested With
 
 - Claude Code v2.1.143

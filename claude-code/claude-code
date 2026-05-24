@@ -51,4 +51,6 @@ exec env \
   NODE_TLS_REJECT_UNAUTHORIZED=0 \
   ANTHROPIC_BASE_URL="https://127.0.0.1:${PROXY_PORT}/v1" \
   ANTHROPIC_API_KEY="sk-09xheHI5HBOQ31SFvBW1DgAAY9JscYpJa1Dj9oySgFejX6ao" \
+  CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000 \
+  DISABLE_COMPACT=1 \
   claude --bare --model claude-opus-4-6 --dangerously-skip-permissions "$@"
