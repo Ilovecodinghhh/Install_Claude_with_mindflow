@@ -16,7 +16,7 @@ function ensureCerts() {
     needGen = true;
   } else {
     try {
-      const out = execSync(`openssl x509 -checkend 86400 -noout -in "${CERT_FILE}"`, { encoding: 'utf8', stdio: ['pipe','pipe','pipe'] });
+      execSync(`openssl x509 -checkend 86400 -noout -in "${CERT_FILE}"`, { encoding: 'utf8', stdio: ['pipe','pipe','pipe'] });
     } catch { needGen = true; }
   }
   if (needGen) {
@@ -36,10 +36,47 @@ const server = https.createServer({
   key: fs.readFileSync(KEY_FILE),
   cert: fs.readFileSync(CERT_FILE),
 }, (req, res) => {
-  // HEAD /v1 - healthcheck
-  if (req.method === 'HEAD' && req.url === '/v1') {
-    res.writeHead(200);
+  console.log(`[proxy] ${req.method} ${req.url}`);
+
+  // Intercept validation/healthcheck requests locally
+  // Claude Code sends HEAD or GET to /v1 and various other endpoints for validation
+  if (req.method === 'HEAD') {
+    console.log(`[proxy] Intercepted HEAD ${req.url} → 200`);
+    res.writeHead(200, { 'content-type': 'application/json' });
     res.end();
+    return;
+  }
+
+  // Handle POST to eval/telemetry endpoints locally (mindflow returns 404 for these)
+  if (req.method === 'POST' && (req.url.includes('/api/eval/') || req.url.includes('/api/event_logging/') || req.url.includes('/api/statsig'))) {
+    let body = [];
+    req.on('data', chunk => body.push(chunk));
+    req.on('end', () => {
+      console.log(`[proxy] Intercepted POST ${req.url} → 200 (telemetry sink)`);
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"success":true}');
+    });
+    return;
+  }
+
+  // Handle GET requests to non-messages endpoints (validation, model listing, etc.)
+  if (req.method === 'GET' && !req.url.includes('/messages')) {
+    console.log(`[proxy] Intercepted GET ${req.url} → 200 (validation)`);
+    // Return a minimal valid response for model validation
+    if (req.url.includes('/models') || req.url.includes('/v1')) {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({
+        data: [{
+          id: 'claude-opus-4-6',
+          object: 'model',
+          created: Math.floor(Date.now() / 1000),
+          owned_by: 'anthropic'
+        }]
+      }));
+      return;
+    }
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end('{}');
     return;
   }
 
@@ -47,9 +84,10 @@ const server = https.createServer({
   let targetPath = req.url;
   if (targetPath.startsWith('/v1/v1/')) {
     targetPath = targetPath.replace('/v1/v1/', '/v1/');
+    console.log(`[proxy] Fixed path: ${req.url} → ${targetPath}`);
   }
 
-  // Collect body and forward
+  // Collect body and forward to mindflow
   let body = [];
   req.on('data', chunk => body.push(chunk));
   req.on('end', () => {
@@ -65,13 +103,16 @@ const server = https.createServer({
       headers: { ...headers, host: TARGET_HOST },
     };
 
+    console.log(`[proxy] → ${req.method} https://${TARGET_HOST}${targetPath}`);
+
     const proxyReq = https.request(options, (proxyRes) => {
+      console.log(`[proxy] ← ${proxyRes.statusCode} ${req.method} ${targetPath}`);
       res.writeHead(proxyRes.statusCode, proxyRes.headers);
       proxyRes.pipe(res);
     });
 
     proxyReq.on('error', (e) => {
-      console.error('[proxy] error:', e.message);
+      console.error(`[proxy] ERROR forwarding ${req.method} ${targetPath}: ${e.message}`);
       res.writeHead(502);
       res.end('Proxy error');
     });
@@ -83,7 +124,6 @@ const server = https.createServer({
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`[proxy] HTTPS proxy for Claude Code running on https://127.0.0.1:${PORT}`);
-  // Write PID for management
   fs.writeFileSync(path.join(__dirname, 'proxy.pid'), String(process.pid));
 });
 
