@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 
 const TARGET_HOST = 'ai.mindflow.com.cn';
-const PORT = 18443;
+const PORT = parseInt(process.env.PROXY_PORT || '18443', 10);
 const CERT_DIR = path.join(__dirname, 'certs');
 const CERT_FILE = path.join(CERT_DIR, 'cert.pem');
 const KEY_FILE = path.join(CERT_DIR, 'key.pem');

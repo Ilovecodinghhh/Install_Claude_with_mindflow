@@ -53,4 +53,4 @@ exec env \
   ANTHROPIC_API_KEY="sk-09xheHI5HBOQ31SFvBW1DgAAY9JscYpJa1Dj9oySgFejX6ao" \
   CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000 \
   DISABLE_COMPACT=1 \
-  claude --bare --model claude-opus-4-6 --dangerously-skip-permissions "$@"
+  claude --model claude-opus-4-6 --dangerously-skip-permissions "$@"
